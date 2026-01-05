@@ -4,12 +4,13 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-REDIS_URL = os.getenv("REDIS_CELERY_URL")
+REDIS_BROKER_URL = os.getenv("REDIS_BROKER_URL")
+REDIS_BACKEND_URL = os.getenv("REDIS_BACKEND_URL")
 
 celery_app = Celery(
     "worker",
-    broker=REDIS_URL,
-    backend=REDIS_URL
+    broker=REDIS_BROKER_URL,
+    backend=REDIS_BACKEND_URL
 )
 
 celery_app.conf.update(

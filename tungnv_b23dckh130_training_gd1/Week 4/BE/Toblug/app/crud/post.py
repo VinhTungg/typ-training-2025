@@ -1,6 +1,6 @@
 import random
 import string
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 from slugify import slugify
 from markdown import markdown
 
@@ -37,4 +37,15 @@ def get_multi(db: Session, skip: int = 0, limit: int = 10):
     return db.query(Post).offset(skip).limit(limit).all()
 
 def get_by_slug(db: Session, slug: str):
-    return db.query(Post).filter(slug == Post.slug).first()
+    return db.query(Post).options(joinedload(Post.owner)).filter(slug == Post.slug).first()
+
+def update_view_count(
+    db: Session,
+    post_id: int
+):
+    post = db.query(Post).filter(Post.id == post_id).first()
+    if post:
+        post.view_count += 1
+        db.commit()
+        db.refresh(post)
+    return post
